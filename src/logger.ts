@@ -13,7 +13,10 @@ function timestamp(): string {
 }
 
 export class Logger {
-  constructor(private readonly logFilePath: string) {}
+  constructor(
+    private readonly logFilePath: string,
+    private readonly quiet: boolean = false,
+  ) {}
 
   private async writeToFile(line: string): Promise<void> {
     try {
@@ -25,13 +28,13 @@ export class Logger {
 
   async moved(sourceName: string, destinationRelative: string): Promise<void> {
     const line = `[${timestamp()}] MOVED  ${sourceName} → ${destinationRelative}`;
-    console.log(line);
+    if (!this.quiet) console.log(line);
     await this.writeToFile(line);
   }
 
   async skipped(name: string, reason: string): Promise<void> {
     const line = `[${timestamp()}] SKIPPED  ${name} (${reason})`;
-    console.log(line);
+    if (!this.quiet) console.log(line);
     await this.writeToFile(line);
   }
 
@@ -43,7 +46,7 @@ export class Logger {
 
   async info(message: string): Promise<void> {
     const line = `[${timestamp()}] INFO  ${message}`;
-    console.log(line);
+    if (!this.quiet) console.log(line);
     await this.writeToFile(line);
   }
 }

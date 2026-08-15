@@ -1,13 +1,16 @@
 {
-  "name": "downloads-organizer",
+  "name": "dorganizer",
   "version": "1.0.0",
   "description": "A local CLI utility that monitors your downloads folder and automatically organizes files into subfolders based on extension",
   "main": "dist/index.js",
   "bin": {
-    "downloads-organizer": "dist/index.js"
+    "dorganizer": "dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node -e \"require('fs').chmodSync('dist/index.js', 0o755)\"",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts"
   },
