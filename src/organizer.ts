@@ -27,7 +27,7 @@ export class Organizer {
       entries = await fs.readdir(this.rootDir, { withFileTypes: true });
     } catch (err) {
       await this.logger.error(
-        `не удалось прочитать содержимое папки: ${this.describeError(err)}`,
+        `cannot read folder contents: ${this.describeError(err)}`,
       );
       return;
     }

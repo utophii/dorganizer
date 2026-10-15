@@ -20,17 +20,17 @@ export async function ensureAccessibleDirectory(dirPath: string): Promise<void> 
   try {
     stat = await fs.stat(dirPath);
   } catch {
-    throw new AccessError(`Папка не найдена: ${dirPath}`);
+    throw new AccessError(`Folder not found: ${dirPath}`);
   }
 
   if (!stat.isDirectory()) {
-    throw new AccessError(`Указанный путь не является папкой: ${dirPath}`);
+    throw new AccessError(`Path is not a folder: ${dirPath}`);
   }
 
   try {
     await fs.access(dirPath, fsConstants.R_OK | fsConstants.W_OK);
   } catch {
-    throw new AccessError(`Недостаточно прав на чтение/запись для папки: ${dirPath}`);
+    throw new AccessError(`Insufficient read/write permissions for folder: ${dirPath}`);
   }
 }
 

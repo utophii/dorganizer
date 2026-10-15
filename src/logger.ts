@@ -22,7 +22,7 @@ export class Logger {
     try {
       await fs.appendFile(this.logFilePath, line + '\n', 'utf8');
     } catch {
-      console.error('Не удалось записать в файл журнала:', this.logFilePath);
+      console.error('Failed to write to log file:', this.logFilePath);
     }
   }
 

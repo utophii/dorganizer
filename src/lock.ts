@@ -34,8 +34,8 @@ export async function acquireLock(targetDir: string): Promise<() => Promise<void
     const pid = parseInt(existing.trim(), 10);
     if (!Number.isNaN(pid) && isProcessAlive(pid)) {
       throw new LockError(
-        `Органайзер уже запущен для этой папки (PID ${pid}). ` +
-          `Если это ошибка — удалите файл блокировки: ${filePath}`,
+        `dorganizer is already running for this folder (PID ${pid}). ` +
+          `If this is a mistake, delete the lock file: ${filePath}`,
       );
     }
   } catch (err) {

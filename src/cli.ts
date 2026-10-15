@@ -20,7 +20,7 @@ export function parseArgs(argv: string[]): CliOptions {
     } else if (arg === '--dir') {
       const value = argv[i + 1];
       if (!value) {
-        throw new Error('Параметр --dir требует значения: путь к папке.');
+        throw new Error('Option --dir requires a value: path to a directory.');
       }
       options.dir = value;
       i++;
@@ -28,7 +28,7 @@ export function parseArgs(argv: string[]): CliOptions {
       options.dir = arg.slice('--dir='.length);
     } else {
       throw new Error(
-        `Неизвестный параметр: ${arg}\nИспользуйте --help для справки.`,
+        `Unknown option: ${arg}\nUse --help for usage information.`,
       );
     }
   }
@@ -38,26 +38,26 @@ export function parseArgs(argv: string[]): CliOptions {
 
 export function printHelp(): void {
   console.log(`
-Органайзер загрузок
+dorganizer - downloads organizer
 
-Постоянно наблюдает за папкой загрузок и автоматически раскладывает
-файлы из её корня по подпапкам на основе расширения.
+Watches your downloads folder and automatically moves files from its
+root into subfolders based on their extension.
 
-Использование:
-  dorganizer [--dir "путь/к/папке"] [--quiet] [--help] [--version]
+Usage:
+  dorganizer [--dir "path/to/folder"] [--quiet] [--help] [--version]
 
-Параметры:
-  --dir <путь>   Папка для наблюдения (по умолчанию: ~/Downloads).
-  -q, --quiet    Не выводить обычные сообщения в консоль (только ошибки).
-                 Полезно при запуске как systemd-сервис.
-  -h, --help     Показать эту справку и выйти.
-  -v, --version  Показать версию и выйти.
+Options:
+  --dir <path>   Folder to watch (default: ~/Downloads).
+  -q, --quiet    Do not print regular messages to the console (errors only).
+                 Useful when running as a systemd service.
+  -h, --help     Show this help and exit.
+  -v, --version  Show version and exit.
 
-Примеры:
+Examples:
   dorganizer
   dorganizer --dir "~/Desktop/Test Downloads"
   dorganizer --quiet
 
-Остановка: Ctrl+C (или системный сигнал завершения).
+To stop: Ctrl+C (or send a termination signal).
 `);
 }

@@ -40,11 +40,11 @@ async function main(): Promise<void> {
   try {
     await ensureAccessibleDirectory(targetDir);
   } catch (err) {
-    console.error(`Не удалось получить доступ к ${targetDir}.`);
-    console.error('Проверьте права доступа к папке или укажите другую папку:');
-    console.error('dorganizer --dir "/путь/к/папке"');
+    console.error(`Cannot access ${targetDir}.`);
+    console.error('Check the folder permissions or specify another folder:');
+    console.error('dorganizer --dir "/path/to/folder"');
     if (err instanceof AccessError) {
-      console.error(`Подробности: ${err.message}`);
+      console.error(`Details: ${err.message}`);
     }
     process.exitCode = 1;
     return;
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
     pollIntervalMs: DEFAULT_POLL_INTERVAL_MS,
   });
 
-  await logger.info(`Наблюдение запущено за папкой: ${targetDir}`);
+  await logger.info(`Watching folder: ${targetDir}`);
 
   await organizer.processExistingFiles();
 
@@ -80,7 +80,7 @@ async function main(): Promise<void> {
   const shutdown = async (): Promise<void> => {
     if (shuttingDown) return;
     shuttingDown = true;
-    await logger.info('Остановка наблюдения...');
+    await logger.info('Stopping...');
     await watcher.close();
     if (releaseLock) await releaseLock();
     process.exit(0);
@@ -91,6 +91,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  console.error('Непредвиденная ошибка:', err);
+  console.error('Unexpected error:', err);
   process.exitCode = 1;
 });
