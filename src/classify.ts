@@ -17,6 +17,16 @@ export function isTemporaryDownload(fileName: string): boolean {
   return TEMP_DOWNLOAD_SUFFIXES.some((suffix) => lower.endsWith(suffix));
 }
 
+export function stripTemporarySuffix(fileName: string): string | null {
+  const lower = fileName.toLowerCase();
+  for (const suffix of TEMP_DOWNLOAD_SUFFIXES) {
+    if (lower.endsWith(suffix) && fileName.length > suffix.length) {
+      return fileName.slice(0, fileName.length - suffix.length);
+    }
+  }
+  return null;
+}
+
 export function classifyFile(fileName: string): Classification {
   const lower = fileName.toLowerCase();
 

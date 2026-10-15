@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import { classifyFile, isTemporaryDownload } from './classify';
+import { TEMP_DOWNLOAD_SUFFIXES } from './config';
 import { ensureDir, moveFile, resolveUniqueDestinationName } from './fsUtils';
 import { Logger } from './logger';
 import { waitUntilStable } from './stability';
@@ -12,6 +13,7 @@ export interface OrganizerOptions {
 
 export class Organizer {
   private readonly processing = new Set<string>();
+  private readonly recheckRequested = new Set<string>();
 
   constructor(
     private readonly rootDir: string,
@@ -45,10 +47,22 @@ export class Organizer {
     return err instanceof Error ? err.message : String(err);
   }
 
+  private async hasPendingDownload(fileName: string): Promise<boolean> {
+    for (const suffix of TEMP_DOWNLOAD_SUFFIXES) {
+      try {
+        await fs.lstat(path.join(this.rootDir, fileName + suffix));
+        return true;
+      } catch {
+      }
+    }
+    return false;
+  }
+
   private async handleCandidate(fileName: string): Promise<void> {
     const fullPath = path.join(this.rootDir, fileName);
 
     if (this.processing.has(fullPath)) {
+      this.recheckRequested.add(fullPath);
       return;
     }
 
@@ -99,6 +113,11 @@ export class Organizer {
         return;
       }
 
+      if (await this.hasPendingDownload(fileName)) {
+        await this.logger.skipped(fileName, 'download in progress');
+        return;
+      }
+
       const classification = classifyFile(fileName);
       const destDir = path.join(this.rootDir, classification.folder);
       await ensureDir(destDir);
@@ -114,6 +133,9 @@ export class Organizer {
       await this.logger.error(`cannot move ${fileName}: ${this.describeError(err)}`);
     } finally {
       this.processing.delete(fullPath);
+      if (this.recheckRequested.delete(fullPath)) {
+        void this.handleCandidate(fileName);
+      }
     }
   }
 }

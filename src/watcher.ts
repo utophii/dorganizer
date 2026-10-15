@@ -1,5 +1,6 @@
 import chokidar, { FSWatcher } from 'chokidar';
 import * as path from 'node:path';
+import { stripTemporarySuffix } from './classify';
 import { Logger } from './logger';
 import { Organizer } from './organizer';
 
@@ -20,6 +21,15 @@ export function createWatcher(
     void organizer.handleNewFile(fileName).catch(async (err) => {
       const message = err instanceof Error ? err.message : String(err);
       await logger.error(`unexpected error handling ${fileName}: ${message}`);
+    });
+  });
+
+  watcher.on('unlink', (filePath) => {
+    const finalName = stripTemporarySuffix(path.basename(filePath));
+    if (finalName === null) return;
+    void organizer.handleNewFile(finalName).catch(async (err) => {
+      const message = err instanceof Error ? err.message : String(err);
+      await logger.error(`unexpected error handling ${finalName}: ${message}`);
     });
   });
 
